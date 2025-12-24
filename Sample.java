@@ -1,71 +1,57 @@
-// Time Complexity : O(n) -> as we have the base impl of LinkedList it's time complexity refers here
-// Space Complexity : O(n) -> where n is the number of inerstions, range for hashing can be constant
+// Time Complexity : O(1)
+// Space Complexity : O(n)
 // Did this code successfully run on Leetcode : Yes
 // Any problem you faced while coding this :
-
-//I started with int[] arr = new int[Integer.MAX_VALUE]
-//where time complexity is O(1) but got memory limit excceded
-//So proceed with having limited number of keys for range, and each array can accomdate a list
+// In push fucntion calculating minVal, I did mistakely poped instared of peek
+// It emptied the Stack when single element is present
 
 // Your code here along with comments explaining your approach
-class MyHashSet {
-    Bucket[] bucket;
+class MinStack {
+    //we will store two vals in int[]
+    //First one current value, second one min element till now
+    Stack<int[]> stack;
+    public MinStack() {
+        stack = new Stack<int[]>();
+    }
 
-    public MyHashSet() {
-        this.bucket = new Bucket[1000];
-        for(int i = 0;i<1000;i++)
+    public void push(int val) {
+        if(stack.isEmpty())
         {
-            this.bucket[i] = new Bucket();
+            stack.push(new int[]{val,val});
+            return;
         }
+        //Calc min value till now
+        int minVal = stack.peek()[1];
+        //Calc curr min by comparinging minVal and incoming val
+        int currMin = Math.min(minVal,val);
+        //push the {val,currMin} into stack
+        stack.push(new int[]{val,currMin});
     }
 
-    protected int _hash(int key)
-    {
-        return (key % 1000);
+    public void pop() {
+        //O(1) time
+        stack.pop();
+
     }
 
-    public void add(int key) {
-        int bucketIndex = this._hash(key);
-        this.bucket[bucketIndex].insert(key);
+    public int top() {
+        //O(1) time
+        return stack.peek()[0];
+
     }
 
-    public void remove(int key) {
-        int bucketIndex = this._hash(key);
-        this.bucket[bucketIndex].remove(key);
-    }
+    public int getMin() {
+        //O(1) time
+        return stack.peek()[1];
 
-    public boolean contains(int key) {
-        int bucketIndex = this._hash(key);
-        return this.bucket[bucketIndex].exists(key);
     }
 }
 
-class Bucket
-{
-    private LinkedList<Integer> list;
-
-    public Bucket()
-    {
-        list = new LinkedList<Integer>();
-    }
-
-    public void insert(Integer key)
-    {
-        int index = this.list.indexOf(key);
-        if(index==-1)
-        {
-            this.list.addFirst(key);
-        }
-    }
-
-    public void remove(Integer key)
-    {
-        this.list.remove(key);
-    }
-
-    public boolean exists(Integer key)
-    {
-        int index = this.list.indexOf(key);
-        return (index!=-1);
-    }
-}
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
